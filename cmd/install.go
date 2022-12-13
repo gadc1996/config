@@ -1,13 +1,13 @@
 /*
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
 
-	"os/exec"
 	"github.com/spf13/cobra"
 )
 
@@ -22,12 +22,29 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("install called")
+		configDir := "config/zsh/"
+		configFilename := "zshrc"
+		homeDir := os.Getenv("HOME") + "/"
+
+		oldname := homeDir + configDir + configFilename
+		newname := homeDir + "." + configFilename
+
+		fmt.Println(homeDir + configDir)
+		if _, err := os.Stat(newname); err != nil {
+			os.Remove(newname)
+		} 
+		  
+		err := os.Symlink(oldname, newname)
+
+		if err != nil {
+			log.Fatalln(err)
+		} else {
+			fmt.Println("Config files installation succeded")
+		}
 	},
 }
 
 func init() {
-	cmd := exec.Command('')
 	rootCmd.AddCommand(installCmd)
 
 	// Here you will define your flags and configuration settings.
